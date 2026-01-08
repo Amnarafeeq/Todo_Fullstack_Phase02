@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { AuthProvider, ToastProvider } from '@/contexts';
+import ClientOnlyProviders from '@/components/ClientOnlyProviders';
 import { Header } from '@/components/Header';
-import { TasksProvider } from '@/contexts/TasksContext';
 
 // Configure Inter font
 const inter = Inter({
@@ -33,29 +32,25 @@ export default function RootLayout({
         bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-900
         min-h-screen flex flex-col
       `}>
-        {/* Wrap with providers for state management */}
-        <AuthProvider>
-          <ToastProvider>
-            <TasksProvider>
-              {/* Header - Visible on all pages */}
-              <Header />
+        {/* Wrap with client-only providers for state management */}
+        <ClientOnlyProviders>
+          {/* Header - Visible on all pages */}
+          <Header />
 
-              {/* Main Content Area */}
-              <main className="flex-1">
-                {children}
-              </main>
+          {/* Main Content Area */}
+          <main className="flex-1">
+            {children}
+          </main>
 
-              {/* Footer */}
-              <footer className="border-t border-gray-200/50 py-6 mt-auto bg-white/50 backdrop-blur-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <p className="text-center text-sm text-gray-600">
-                    &copy; {new Date().getFullYear()} Todo App. All rights reserved.
-                  </p>
-                </div>
-              </footer>
-            </TasksProvider>
-          </ToastProvider>
-        </AuthProvider>
+          {/* Footer */}
+          <footer className="border-t border-gray-200/50 py-6 mt-auto bg-white/50 backdrop-blur-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <p className="text-center text-sm text-gray-600">
+                &copy; {new Date().getFullYear()} Todo App. All rights reserved.
+              </p>
+            </div>
+          </footer>
+        </ClientOnlyProviders>
       </body>
     </html>
   );
