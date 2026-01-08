@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useTasks } from '@/contexts/TasksContext';
+import { useState, useMemo } from 'react';
+import { useTasks } from '@/hooks/useTasks';
 import { TaskList, TaskFilters, TaskForm } from '@/components';
 import { Task, TaskFilters as ITaskFilters, defaultTaskFilters } from '@/types';
 
@@ -13,13 +13,24 @@ export default function TasksPage() {
 
   // Tasks hook
   const {
-    tasks,
+    tasks: allTasks,
     loading: tasksLoading,
     createTask,
     updateTask,
     deleteTask,
     toggleTask,
-  } = useTasks(filters);
+  } = useTasks();
+
+  // Apply filters to tasks
+  const tasks = useMemo(() => {
+    return allTasks.filter(task => {
+      if (filters.status && task.status !== filters.status) return false;
+      if (filters.priority && task.priority !== filters.priority) return false;
+      if (filters.category && task.category !== filters.category) return false;
+      if (filters.search && !task.title.toLowerCase().includes(filters.search.toLowerCase())) return false;
+      return true;
+    });
+  }, [allTasks, filters]);
 
   const categories = Array.from(new Set(tasks.map(t => t.category).filter(Boolean) as string[]));
 
