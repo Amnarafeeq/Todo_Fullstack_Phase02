@@ -1,0 +1,282 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* New color palette */
+  --primary: #2f6978; /* Primary color */
+  --primary-hover: #1f4a58; /* Primary hover color */
+  --secondary: #42aec9; /* Secondary color */
+  --secondary-hover: #3a9bb5; /* Secondary hover color */
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-gray-50 to-white text-gray-900;
+  }
+}
+
+@layer components {
+  /* Button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2.5 rounded-xl font-medium
+           transition-all duration-300 ease-in-out
+           focus:outline-none focus:ring-2 focus:ring-[#42aec9] focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-[#42aec9] to-[#2f6978] text-white hover:from-[#2f6978] hover:to-[#1f4a58] active:from-[#1f4a58] active:to-[#1a3944];
+  }
+
+  .btn-secondary {
+    @apply bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300 border border-gray-200/70;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-gray-600 hover:bg-gray-100 active:bg-gray-200 border border-transparent hover:border-gray-200/70;
+  }
+
+  .btn-danger {
+    @apply bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 active:from-red-700 active:to-red-800 shadow-red-200 hover:shadow-red-300;
+  }
+
+  /* Input base styles */
+  .input {
+    @apply w-full px-4 py-3.5 rounded-xl border border-gray-300/70
+           placeholder:text-gray-400 bg-white/80
+           focus:outline-none focus:ring-2 focus:ring-[#42aec9] focus:border-[#42aec9]
+           transition-all duration-300 hover:border-[#42aec9];
+  }
+
+  .input-error {
+    @apply border-red-300 focus:ring-red-200 focus:border-red-500 bg-red-50/50;
+  }
+
+  /* Card base styles */
+  .card {
+    @apply bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-md border border-gray-200/70
+           transition-all duration-300 hover:shadow-lg;
+  }
+
+  /* Badge base styles */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border;
+  }
+
+  .badge-success {
+    @apply bg-gradient-to-r from-green-100 to-green-200 text-green-800 border-green-200/70;
+  }
+
+  .badge-warning {
+    @apply bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border-yellow-200/70;
+  }
+
+  .badge-danger {
+    @apply bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-red-200/70;
+  }
+
+  .badge-info {
+    @apply bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border-blue-200/70;
+  }
+
+  .badge-default {
+    @apply bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border-gray-200/70;
+  }
+
+  /* Auth page specific styles */
+  .auth-card {
+    @apply bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-200/70 p-8 w-full;
+    @apply max-w-md mx-auto;
+  }
+
+  .auth-title {
+    @apply text-2xl font-bold text-[#2f6978] mb-2 text-center;
+  }
+
+  .auth-description {
+    @apply text-gray-600 text-center mb-8;
+  }
+
+  .auth-form {
+    @apply space-y-5;
+  }
+
+  .auth-field {
+    @apply space-y-2;
+  }
+
+  .auth-label {
+    @apply block text-sm font-semibold text-[#2f6978] uppercase tracking-wide;
+  }
+
+  .auth-input {
+    @apply w-full px-4 py-3.5 rounded-xl border border-gray-300/70 bg-white/80;
+    @apply placeholder:text-gray-400 text-gray-900;
+    @apply focus:outline-none focus:ring-2 focus:ring-[#42aec9] focus:border-[#42aec9];
+    @apply transition-all duration-300 ease-in-out hover:border-[#42aec9];
+    @apply disabled:opacity-50 disabled:cursor-not-allowed shadow-sm;
+  }
+
+  .auth-input:hover:not(:disabled) {
+    @apply border-[#42aec9]/80;
+  }
+
+  .auth-button-primary {
+    @apply inline-flex items-center justify-center px-4 py-3.5;
+    @apply bg-gradient-to-r from-[#42aec9] to-[#2f6978] text-white font-medium rounded-xl;
+    @apply hover:from-[#2f6978] hover:to-[#1f4a58] active:from-[#1f4a58] active:to-[#1a3944];
+    @apply focus:outline-none focus:ring-2 focus:ring-[#42aec9] focus:ring-offset-2;
+    @apply transition-all duration-300 ease-in-out shadow-md hover:shadow-xl;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .auth-button-primary:hover:not(:disabled) {
+    @apply transform -translate-y-0.5;
+  }
+
+  .auth-link {
+    @apply text-[#42aec9] hover:text-[#2f6978] font-medium transition-colors duration-300 hover:underline;
+  }
+
+  .auth-footer {
+    @apply text-center mt-6 pt-6 border-t border-gray-200/70;
+  }
+
+  .auth-hint {
+    @apply text-xs text-gray-500 mt-1;
+  }
+
+  .auth-error {
+    @apply text-xs text-red-600 mt-1 min-h-[1rem] flex items-center gap-1;
+  }
+
+  /* Dashboard styles */
+  .dashboard-create-button {
+    @apply inline-flex items-center justify-center px-5 py-3 bg-gradient-to-r from-[#42aec9] to-[#2f6978] text-white font-medium rounded-xl;
+    @apply hover:from-[#2f6978] hover:to-[#1f4a58] active:from-[#1f4a58] active:to-[#1a3944];
+    @apply focus:outline-none focus:ring-2 focus:ring-[#42aec9] focus:ring-offset-2;
+    @apply transition-all duration-300 ease-in-out shadow-md hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .dashboard-create-button:hover:not(:disabled) {
+    @apply shadow-lg;
+  }
+
+  .dashboard-search-input {
+    @apply w-full sm:w-64 pl-10 pr-4 py-2.5;
+    @apply rounded-xl border border-gray-300/70 bg-white/80;
+    @apply placeholder:text-gray-400 text-gray-900 text-sm;
+    @apply focus:outline-none focus:ring-2 focus:ring-[#42aec9] focus:border-[#42aec9];
+    @apply transition-all duration-300 shadow-sm;
+  }
+
+  .dashboard-stat-card {
+    @apply bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 border border-gray-200/70;
+    @apply shadow-md hover:shadow-lg;
+    @apply transition-all duration-300;
+  }
+
+  .dashboard-task-list {
+    @apply bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-200/70;
+    @apply shadow-md hover:shadow-lg;
+    @apply min-h-[400px];
+  }
+
+  /* Sidebar navigation active state */
+  .sidebar-nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl font-medium;
+    @apply transition-all duration-300;
+    @apply text-gray-600 hover:bg-gradient-to-r hover:from-[#42aec9]/5 hover:to-[#2f6978]/5 hover:text-[#2f6978];
+    @apply focus:outline-none focus:ring-2 focus:ring-[#42aec9];
+  }
+
+  .sidebar-nav-item-active {
+    @apply bg-gradient-to-r from-[#42aec9]/10 to-[#2f6978]/10 text-[#2f6978] border border-[#42aec9]/30;
+    @apply hover:bg-gradient-to-r hover:from-[#42aec9]/15 hover:to-[#2f6978]/15;
+  }
+}
+
+@layer utilities {
+  /* Custom focus visible for accessibility */
+  .focus-visible {
+    @apply focus:outline-none focus:ring-2 focus:ring-[#42aec9] focus:ring-offset-2;
+  }
+
+  /* Smooth transitions */
+  .transition-smooth {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Animations */
+  @keyframes slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right 0.3s ease-out;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out;
+  }
+
+  /* Enhanced animations */
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+
+  /* Gradient text utilities */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-[#42aec9] to-[#2f6978] bg-clip-text text-transparent;
+  }
+
+  /* Enhanced shadow utilities */
+  .shadow-subtle {
+    @apply shadow-sm;
+  }
+
+  .shadow-soft {
+    @apply shadow-md;
+  }
+
+  .shadow-medium {
+    @apply shadow-lg;
+  }
+
+  .shadow-strong {
+    @apply shadow-xl;
+  }
+}
