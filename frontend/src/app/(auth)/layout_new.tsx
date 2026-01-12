@@ -47,6 +47,13 @@ export default function AuthLayout({
           {children}
         </div>
       </div>
+
+      {/* Simple Footer */}
+      <footer className="py-4">
+        <p className="text-center text-sm text-gray-400">
+          &copy; {new Date().getFullYear()} TaskFlow. All rights reserved.
+        </p>
+      </footer>
     </div>
   );
 }

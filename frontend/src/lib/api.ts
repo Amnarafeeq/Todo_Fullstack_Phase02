@@ -9,6 +9,7 @@ import {
   UpdateTaskRequest,
   TaskFilters
 } from '@/types';
+import { transformTaskFromBackend, transformTasksFromBackend, transformTaskForBackend } from '@/utils/data-transformers';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
@@ -83,21 +84,25 @@ class ApiClient {
     }
 
     const queryString = query.toString();
-    return this.request<Task[]>(`/api/${userId}/tasks${queryString ? `?${queryString}` : ''}`);
+    const backendTasks = await this.request<any[]>(`/api/${userId}/tasks${queryString ? `?${queryString}` : ''}`);
+    return transformTasksFromBackend(backendTasks);
   }
 
   async createTask(userId: number, task: CreateTaskRequest): Promise<Task> {
-    return this.request<Task>(`/api/${userId}/tasks`, {
+    const backendTask = await this.request<any>(`/api/${userId}/tasks`, {
       method: 'POST',
       body: JSON.stringify(task),
     });
+    return transformTaskFromBackend(backendTask);
   }
 
   async updateTask(userId: number, taskId: number, task: UpdateTaskRequest): Promise<Task> {
-    return this.request<Task>(`/api/${userId}/tasks/${taskId}`, {
+    const transformedTask = transformTaskForBackend(task);
+    const backendTask = await this.request<any>(`/api/${userId}/tasks/${taskId}`, {
       method: 'PUT',
-      body: JSON.stringify(task),
+      body: JSON.stringify(transformedTask),
     });
+    return transformTaskFromBackend(backendTask);
   }
 
   async deleteTask(userId: number, taskId: number): Promise<void> {
@@ -106,10 +111,14 @@ class ApiClient {
     });
   }
 
-  async toggleTask(userId: number, taskId: number): Promise<Task> {
-    return this.request<Task>(`/api/${userId}/tasks/${taskId}/complete`, {
+  async toggleTask(userId: number, taskId: number): Promise<any> {
+    // Toggle the task status and return the response from the toggle endpoint
+    const response = await this.request<any>(`/api/${userId}/tasks/${taskId}/complete`, {
       method: 'PATCH',
     });
+
+    // The backend returns the updated status info, we'll use this to update our task
+    return response;
   }
 }
 

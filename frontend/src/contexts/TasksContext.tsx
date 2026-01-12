@@ -24,7 +24,7 @@ type TasksAction =
   | { type: 'SET_TASKS'; payload: Task[] }
   | { type: 'ADD_TASK'; payload: Task }
   | { type: 'UPDATE_TASK'; payload: Task }
-  | { type: 'DELETE_TASK'; payload: number }
+  | { type: 'DELETE_TASK'; payload: number | string }
   | { type: 'TOGGLE_TASK'; payload: Task }
   | { type: 'REFRESH_TASKS' };
 
@@ -96,6 +96,7 @@ interface TasksContextType extends TasksState {
   updateTask: (taskId: number, taskData: any) => Promise<void>;
   deleteTask: (taskId: number) => Promise<void>;
   toggleTask: (taskId: number) => Promise<void>;
+  deleteAllTasks: () => Promise<void>;
 }
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
@@ -146,11 +147,32 @@ export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const createTask = async (taskData: any) => {
     if (!user) return;
 
+    // Optimistically add the task to the state to update UI immediately
+    // Generate a temporary ID for optimistic update
+    const tempId = `temp_${Date.now()}_${Math.random()}`;
+    const tempTask = {
+      id: tempId,
+      ...taskData,
+      status: taskData.completed ? 'completed' : 'pending',
+      userId: user.id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    dispatch({ type: 'ADD_TASK', payload: tempTask });
+
     try {
+      // Create the task in the backend
       const newTask = await api.createTask(user.id, taskData);
-      dispatch({ type: 'ADD_TASK', payload: newTask });
+
+      // Replace the temporary task with the real task (instead of delete+add)
+      dispatch({ type: 'UPDATE_TASK', payload: newTask });
+
       showToast('Task created successfully', 'success');
     } catch (error: any) {
+      // If API call fails, remove the optimistic task
+      dispatch({ type: 'DELETE_TASK', payload: tempId });
+
       const message = error.message || 'Failed to create task';
       dispatch({ type: 'SET_ERROR', payload: message });
       showToast(message, 'error');
@@ -161,11 +183,29 @@ export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const updateTask = async (taskId: number, taskData: any) => {
     if (!user) return;
 
+    // Find the current task to revert if API call fails
+    const currentTask = state.tasks.find(task => task.id === taskId);
+    if (!currentTask) {
+      const message = 'Task not found';
+      dispatch({ type: 'SET_ERROR', payload: message });
+      showToast(message, 'error');
+      return;
+    }
+
+    // Optimistically update the task in the state
+    const updatedTask = { ...currentTask, ...taskData, updatedAt: new Date().toISOString() };
+    dispatch({ type: 'UPDATE_TASK', payload: updatedTask });
+
     try {
-      const updatedTask = await api.updateTask(user.id, taskId, taskData);
-      dispatch({ type: 'UPDATE_TASK', payload: updatedTask });
+      // Update the task in the backend
+      const actualUpdatedTask = await api.updateTask(user.id, taskId, taskData);
+      // Replace with the actual updated task from backend
+      dispatch({ type: 'UPDATE_TASK', payload: actualUpdatedTask });
       showToast('Task updated successfully', 'success');
     } catch (error: any) {
+      // If API call fails, revert to the original task
+      dispatch({ type: 'UPDATE_TASK', payload: currentTask });
+
       const message = error.message || 'Failed to update task';
       dispatch({ type: 'SET_ERROR', payload: message });
       showToast(message, 'error');
@@ -176,11 +216,26 @@ export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const deleteTask = async (taskId: number) => {
     if (!user) return;
 
+    // Find the current task to revert if API call fails
+    const currentTask = state.tasks.find(task => task.id === taskId);
+    if (!currentTask) {
+      const message = 'Task not found';
+      dispatch({ type: 'SET_ERROR', payload: message });
+      showToast(message, 'error');
+      return;
+    }
+
+    // Optimistically remove the task from the state
+    dispatch({ type: 'DELETE_TASK', payload: taskId });
+
     try {
+      // Delete the task in the backend
       await api.deleteTask(user.id, taskId);
-      dispatch({ type: 'DELETE_TASK', payload: taskId });
       showToast('Task deleted successfully', 'success');
     } catch (error: any) {
+      // If API call fails, add the task back to the state
+      dispatch({ type: 'ADD_TASK', payload: currentTask });
+
       const message = error.message || 'Failed to delete task';
       dispatch({ type: 'SET_ERROR', payload: message });
       showToast(message, 'error');
@@ -190,11 +245,92 @@ export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const toggleTask = async (taskId: number) => {
     if (!user) return;
 
+    // Find the current task to revert if API call fails
+    const currentTask = state.tasks.find(task => task.id === taskId);
+    if (!currentTask) {
+      const message = 'Task not found';
+      dispatch({ type: 'SET_ERROR', payload: message });
+      showToast(message, 'error');
+      return;
+    }
+
+    // Optimistically toggle the task status in the state
+    const newStatus = currentTask.status === 'completed' ? 'pending' : 'completed';
+    const toggledTask: Task = {
+      ...currentTask,
+      status: newStatus,
+      updatedAt: new Date().toISOString()
+    };
+    dispatch({ type: 'UPDATE_TASK', payload: toggledTask });
+
     try {
-      const updatedTask = await api.toggleTask(user.id, taskId);
-      dispatch({ type: 'TOGGLE_TASK', payload: updatedTask });
+      // Toggle the task in the backend
+      // The backend API returns the updated status info
+      const response = await api.toggleTask(user.id, taskId);
+
+      // Update the task with the current task data plus the updated status from the response
+      const updatedTask: Task = {
+        ...currentTask,
+        status: response.completed ? 'completed' : 'pending',
+        updatedAt: response.updated_at || new Date().toISOString()
+      };
+
+      dispatch({ type: 'UPDATE_TASK', payload: updatedTask });
     } catch (error: any) {
+      // If API call fails, revert to the original task
+      dispatch({ type: 'UPDATE_TASK', payload: currentTask });
+
       const message = error.message || 'Failed to update task status';
+      dispatch({ type: 'SET_ERROR', payload: message });
+      showToast(message, 'error');
+    }
+  };
+
+  const deleteAllTasks = async () => {
+    if (!user) return;
+
+    try {
+      // Get all current task IDs to track for potential rollback
+      const taskIds = [...state.tasks].map(task => task.id);
+
+      if (taskIds.length === 0) {
+        showToast('No tasks to delete', 'info');
+        return;
+      }
+
+      // Optimistically clear all tasks from the state
+      dispatch({ type: 'SET_TASKS', payload: [] });
+      showToast('Deleting all tasks...', 'info');
+
+      // Delete each task individually using the existing deleteTask API
+      const deletePromises = taskIds.map(taskId =>
+        api.deleteTask(user.id, taskId).catch(error => {
+          // If any individual delete fails, we'll handle it after
+          console.error(`Failed to delete task ${taskId}:`, error);
+          return Promise.reject({ taskId, error });
+        })
+      );
+
+      // Wait for all delete operations to complete
+      const results = await Promise.allSettled(deletePromises);
+
+      // Count successes and failures
+      const successfulDeletions = results.filter(result => result.status === 'fulfilled').length;
+      const failedDeletions = results.filter(result => result.status === 'rejected').length;
+
+      // Refresh tasks to ensure state is consistent with backend
+      await refreshTasks();
+
+      if (failedDeletions === 0) {
+        showToast(`All ${successfulDeletions} tasks deleted successfully`, 'success');
+      } else {
+        showToast(
+          `Successfully deleted ${successfulDeletions} tasks. ${failedDeletions} failed.`,
+          'warning'
+        );
+      }
+    } catch (error: any) {
+      const message = error.message || 'Failed to delete all tasks';
       dispatch({ type: 'SET_ERROR', payload: message });
       showToast(message, 'error');
     }
@@ -209,6 +345,7 @@ export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         updateTask,
         deleteTask,
         toggleTask,
+        deleteAllTasks,
       }}
     >
       {children}

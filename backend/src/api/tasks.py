@@ -127,7 +127,7 @@ async def create_task(
 @router.get("/{task_id}", response_model=TaskPublic)
 async def get_task(
     user_id: str,
-    task_id: int,
+    task_id: str,
     current_user: AuthenticatedUser = Depends(get_current_user),
     session: Session = Depends(get_session)
 ):
@@ -138,7 +138,22 @@ async def get_task(
     """
     verify_user_access(user_id, current_user)
 
-    task = session.get(Task, task_id)
+    # Handle temporary IDs (they start with "temp_")
+    if task_id.startswith("temp_"):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Temporary task ID not found"
+        )
+
+    try:
+        task_int_id = int(task_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid task ID format"
+        )
+
+    task = session.get(Task, task_int_id)
 
     if not task:
         raise HTTPException(
@@ -159,7 +174,7 @@ async def get_task(
 @router.put("/{task_id}", response_model=TaskPublic)
 async def update_task(
     user_id: str,
-    task_id: int,
+    task_id: str,
     task_in: TaskUpdate,
     current_user: AuthenticatedUser = Depends(get_current_user),
     session: Session = Depends(get_session)
@@ -172,7 +187,22 @@ async def update_task(
     """
     verify_user_access(user_id, current_user)
 
-    db_task = session.get(Task, task_id)
+    # Handle temporary IDs (they start with "temp_")
+    if task_id.startswith("temp_"):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Temporary task ID not found"
+        )
+
+    try:
+        task_int_id = int(task_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid task ID format"
+        )
+
+    db_task = session.get(Task, task_int_id)
 
     if not db_task:
         raise HTTPException(
@@ -202,7 +232,7 @@ async def update_task(
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_task(
     user_id: str,
-    task_id: int,
+    task_id: str,
     current_user: AuthenticatedUser = Depends(get_current_user),
     session: Session = Depends(get_session)
 ):
@@ -213,7 +243,22 @@ async def delete_task(
     """
     verify_user_access(user_id, current_user)
 
-    db_task = session.get(Task, task_id)
+    # Handle temporary IDs (they start with "temp_")
+    if task_id.startswith("temp_"):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Temporary task ID not found"
+        )
+
+    try:
+        task_int_id = int(task_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid task ID format"
+        )
+
+    db_task = session.get(Task, task_int_id)
 
     if not db_task:
         raise HTTPException(
@@ -236,7 +281,7 @@ async def delete_task(
 @router.patch("/{task_id}/complete")
 async def toggle_completion(
     user_id: str,
-    task_id: int,
+    task_id: str,
     current_user: AuthenticatedUser = Depends(get_current_user),
     session: Session = Depends(get_session)
 ):
@@ -248,7 +293,22 @@ async def toggle_completion(
     """
     verify_user_access(user_id, current_user)
 
-    db_task = session.get(Task, task_id)
+    # Handle temporary IDs (they start with "temp_")
+    if task_id.startswith("temp_"):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Temporary task ID not found"
+        )
+
+    try:
+        task_int_id = int(task_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid task ID format"
+        )
+
+    db_task = session.get(Task, task_int_id)
 
     if not db_task:
         raise HTTPException(
