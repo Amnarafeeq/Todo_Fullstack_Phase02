@@ -29,33 +29,43 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Check for existing session on mount
   useEffect(() => {
-    const initAuth = async () => {
-      const token = authUtils.getToken();
-      if (token) {
-        try {
-          // In a real app, we might have a /me endpoint
-          // For now, we'll try to get user info from the token or a cached state
-          // Placeholder implementation:
-          const savedUser = localStorage.getItem('user');
-          if (savedUser) {
-            setUser(JSON.parse(savedUser));
+    // Check if we're in the browser environment
+    if (typeof window !== 'undefined') {
+      const initAuth = async () => {
+        const token = authUtils.getToken();
+        if (token) {
+          try {
+            // In a real app, we might have a /me endpoint
+            // For now, we'll try to get user info from the token or a cached state
+            // Placeholder implementation:
+            const savedUser = localStorage.getItem('user');
+            if (savedUser) {
+              setUser(JSON.parse(savedUser));
+            }
+          } catch (error) {
+            authUtils.removeToken();
+            localStorage.removeItem('user');
           }
-        } catch (error) {
-          authUtils.removeToken();
-          localStorage.removeItem('user');
         }
-      }
-      setLoading(false);
-    };
+        setLoading(false);
+      };
 
-    initAuth();
+      initAuth();
+    } else {
+      // On the server, just set loading to false
+      setLoading(false);
+    }
   }, []);
 
   const login = async (credentials: LoginRequest): Promise<void> => {
     try {
       const { access_token, user: userData } = await api.login(credentials);
       authUtils.setToken(access_token);
-      localStorage.setItem('user', JSON.stringify(userData));
+
+      // Only save to localStorage if in browser
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
       setUser(userData);
     } catch (error) {
       throw error;
@@ -66,7 +76,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const { access_token, user: userData } = await api.register(data);
       authUtils.setToken(access_token);
-      localStorage.setItem('user', JSON.stringify(userData));
+
+      // Only save to localStorage if in browser
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
       setUser(userData);
     } catch (error) {
       throw error;
@@ -75,7 +89,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = useCallback((): void => {
     authUtils.removeToken();
-    localStorage.removeItem('user');
+
+    // Only remove from localStorage if in browser
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem('user');
+    }
     setUser(null);
   }, []);
 

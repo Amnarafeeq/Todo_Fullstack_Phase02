@@ -33,7 +33,8 @@ class ApiClient {
 
     if (response.status === 401) {
       authUtils.removeToken();
-      if (typeof window !== 'undefined') {
+      // Only redirect in browser environment
+      if (typeof window !== 'undefined' && typeof window.location !== 'undefined') {
         window.location.href = '/login';
       }
     }
