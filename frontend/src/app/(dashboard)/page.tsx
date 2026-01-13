@@ -3,6 +3,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { AuthProvider, ToastProvider } from '@/contexts';
 
 /**
  * Dashboard Page
@@ -10,7 +11,7 @@ import { useEffect } from 'react';
  * Main task management interface.
  * Protected route - requires authentication.
  */
-export default function DashboardPage() {
+function DashboardPageContent() {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
 
@@ -126,5 +127,15 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <AuthProvider>
+      <ToastProvider>
+        <DashboardPageContent />
+      </ToastProvider>
+    </AuthProvider>
   );
 }

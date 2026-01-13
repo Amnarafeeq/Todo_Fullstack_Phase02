@@ -12,7 +12,10 @@ import {
 import { TaskList, TaskForm } from '@/components';
 import { Task, TaskFilters as ITaskFilters, defaultTaskFilters } from '@/types';
 
-export default function DashboardPage() {
+import { AuthProvider, ToastProvider } from '@/contexts';
+import { TasksProvider } from '@/contexts/TasksContext';
+
+function DashboardPageContent() {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -440,5 +443,17 @@ export default function DashboardPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <AuthProvider>
+      <ToastProvider>
+        <TasksProvider>
+          <DashboardPageContent />
+        </TasksProvider>
+      </ToastProvider>
+    </AuthProvider>
   );
 }

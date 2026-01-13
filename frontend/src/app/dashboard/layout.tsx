@@ -1,71 +1,27 @@
-'use client';
-
-import { ReactNode, useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Sidebar } from '@/components/dashboard/Sidebar';
+import { ReactNode } from 'react';
 
 /**
  * Dashboard Layout
  *
- * Wraps all dashboard pages with sidebar navigation and responsive design.
- * Provides a professional SaaS-style layout with:
- * - Collapsible sidebar for navigation
- * - Mobile-responsive hamburger menu
- * - Consistent header and content area
+ * Simple layout wrapper for dashboard pages.
+ * The actual providers and header are handled by individual pages or a global wrapper.
  */
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname();
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-          aria-hidden="true"
-        />
-      )}
+      {/* Animated background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
 
-      {/* Sidebar */}
-      <Sidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        pathname={pathname}
-      />
-
-      {/* Main Content Wrapper */}
-      <div className="lg:pl-64">
-        {/* Mobile Sidebar Toggle - Positioned for accessibility when global header is present */}
-        <div className="lg:hidden p-4 flex items-center bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50 sticky top-16 z-20">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="flex items-center gap-2 text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
-            aria-label="Open navigation menu"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <span>Navigation Menu</span>
-          </button>
-        </div>
-
-        {/* Page Content */}
-        <main className="p-4 lg:p-8">
-          {children}
-        </main>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {children}
       </div>
     </div>
   );
