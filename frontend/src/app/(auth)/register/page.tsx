@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks';
-import { useToast, AuthProvider, ToastProvider } from '@/contexts';
+import { useToast } from '@/contexts';
 
-function RegisterPageContent() {
+export default function RegisterPage() {
   const { register, isAuthenticated } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
@@ -248,15 +248,5 @@ function RegisterPageContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function RegisterPage() {
-  return (
-    <AuthProvider>
-      <ToastProvider>
-        <RegisterPageContent />
-      </ToastProvider>
-    </AuthProvider>
   );
 }

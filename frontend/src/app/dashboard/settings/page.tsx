@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks';
 import { authUtils } from '@/lib/auth';
-import { AuthProvider, ToastProvider } from '@/contexts';
 
-function SettingsPageContent() {
+
+export default function SettingsPage() {
   const { user, logout } = useAuth();
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -267,15 +267,5 @@ function SettingsPageContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function SettingsPage() {
-  return (
-    <AuthProvider>
-      <ToastProvider>
-        <SettingsPageContent />
-      </ToastProvider>
-    </AuthProvider>
   );
 }

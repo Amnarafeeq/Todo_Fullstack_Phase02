@@ -4,9 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks';
 import Link from 'next/link';
-import { AuthProvider, ToastProvider } from '@/contexts';
 
-function LandingPageContent() {
+export default function LandingPage() {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -376,15 +375,5 @@ function LandingPageContent() {
       </section>
 
     </main>
-  );
-}
-
-export default function LandingPage() {
-  return (
-    <AuthProvider>
-      <ToastProvider>
-        <LandingPageContent />
-      </ToastProvider>
-    </AuthProvider>
   );
 }

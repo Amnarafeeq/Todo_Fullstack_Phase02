@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import Providers from './providers';
 
 // Configure Inter font
 const inter = Inter({
@@ -30,9 +31,11 @@ export default function RootLayout({
         bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100
         min-h-screen flex flex-col
       `}>
-        <main className="flex-1">
-          {children}
-        </main>
+        <Providers>
+          <main className="flex-1">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

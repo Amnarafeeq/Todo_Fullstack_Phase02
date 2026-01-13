@@ -4,9 +4,8 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks';
-import { AuthProvider, ToastProvider } from '@/contexts';
 
-function LoginPageContent() {
+export default function LoginPage() {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -178,15 +177,5 @@ function LoginPageContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <AuthProvider>
-      <ToastProvider>
-        <LoginPageContent />
-      </ToastProvider>
-    </AuthProvider>
   );
 }

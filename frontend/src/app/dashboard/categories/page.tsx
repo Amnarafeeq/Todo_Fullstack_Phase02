@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useTasks } from '@/hooks';
 import { Task } from '@/types';
-import { AuthProvider, ToastProvider } from '@/contexts';
-import { TasksProvider } from '@/contexts/TasksContext';
 
-function CategoriesPageContent() {
+
+export default function CategoriesPage() {
   const { tasks, loading } = useTasks();
   const [categories, setCategories] = useState<{ name: string; count: number; tasks: Task[] }[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -166,17 +165,5 @@ function CategoriesPageContent() {
         )}
       </div>
     </div>
-  );
-}
-
-export default function CategoriesPage() {
-  return (
-    <AuthProvider>
-      <ToastProvider>
-        <TasksProvider>
-          <CategoriesPageContent />
-        </TasksProvider>
-      </ToastProvider>
-    </AuthProvider>
   );
 }

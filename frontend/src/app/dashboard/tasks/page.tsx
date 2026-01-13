@@ -4,10 +4,8 @@ import { useState, useMemo } from 'react';
 import { useTasks } from '@/hooks/useTasks';
 import { TaskList, TaskFilters, TaskForm } from '@/components';
 import { Task, TaskFilters as ITaskFilters, defaultTaskFilters } from '@/types';
-import { AuthProvider, ToastProvider } from '@/contexts';
-import { TasksProvider } from '@/contexts/TasksContext';
 
-function TasksPageContent() {
+export default function TasksPage() {
   // Filters state
   const [filters, setFilters] = useState<ITaskFilters>(defaultTaskFilters);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -253,17 +251,5 @@ function TasksPageContent() {
         )}
       </div>
     </div>
-  );
-}
-
-export default function TasksPage() {
-  return (
-    <AuthProvider>
-      <ToastProvider>
-        <TasksProvider>
-          <TasksPageContent />
-        </TasksProvider>
-      </ToastProvider>
-    </AuthProvider>
   );
 }
