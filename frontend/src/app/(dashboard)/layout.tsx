@@ -1,5 +1,18 @@
 import { ReactNode } from 'react';
-import { Providers } from '../providers';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the client-side providers wrapper to avoid SSR issues
+const ClientProvidersWrapper = dynamic(() => import('../ClientProvidersWrapper'), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto mb-4" />
+        <p className="text-gray-300">Loading...</p>
+      </div>
+    </div>
+  ),
+});
 
 // Layout for authenticated routes that need providers
 export default function DashboardLayout({
@@ -8,10 +21,10 @@ export default function DashboardLayout({
   children: ReactNode;
 }) {
   return (
-    <Providers>
+    <ClientProvidersWrapper>
       <main className="flex-1">
         {children}
       </main>
-    </Providers>
+    </ClientProvidersWrapper>
   );
 }
