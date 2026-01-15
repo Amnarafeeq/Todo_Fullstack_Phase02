@@ -13,9 +13,10 @@ dependencies = [
     "sqlmodel>=0.0.31",
     "uvicorn[standard]>=0.40.0",
     "gunicorn>=22.0.0",
-    "pydantic-settings>=2.0.0",
 ]
 
 [project.scripts]
-start = "uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+start = "src.main:app"
 dev = "uvicorn src.main:app --reload --host 0.0.0.0 --port 8000"
+
+[tool.uv.pip]

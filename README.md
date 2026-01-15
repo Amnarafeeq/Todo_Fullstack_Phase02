@@ -320,13 +320,58 @@ All Phase I functionality is preserved and enhanced:
 - ✅ Filter by status/priority/category
 - ✅ Sort by priority/alphabetically
 
-## Next Steps
+## Production Deployment
 
-1. Review specifications in `/specs/`
-2. Set up development environment
-3. Run agents to implement features
-4. Test thoroughly
-5. Deploy to production
+### Vercel Deployment (Frontend)
+
+1. Connect your repository to Vercel
+2. Set environment variables in Vercel dashboard:
+   - `NEXT_PUBLIC_API_URL`: URL of your deployed backend API
+3. Build command: `npm run build`
+4. Output directory: Leave blank for Next.js
+
+### Backend Deployment Options
+
+The backend API needs to be deployed separately. Choose one of these options:
+
+#### Option 1: Deploy to Platform (Recommended)
+- Deploy backend to Railway, Heroku, or AWS
+- Update `NEXT_PUBLIC_API_URL` to point to your backend domain
+
+#### Option 2: Self-hosted
+- Deploy the FastAPI application to your own server
+- Ensure CORS settings allow your frontend domain
+
+### Environment Variables
+
+#### Frontend (set in Vercel dashboard):
+```
+NEXT_PUBLIC_API_URL=[your-backend-domain]
+```
+
+#### Backend (set in your backend hosting environment):
+```
+DATABASE_URL=[your-postgres-db-url]
+JWT_SECRET_KEY=[secure-random-string]
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
+
+### Architecture Notes
+
+- The frontend communicates with the backend via REST API
+- Authentication is handled via JWT tokens
+- Database is PostgreSQL (configured for Neon serverless)
+- CORS is configured for local development
+
+## Development Workflow
+
+This project follows the **Spec-Kit Plus workflow** with spec-driven development:
+
+1. **Create Specifications**: Define features, APIs, database schemas, and UI components in `/specs/`
+2. **Run Agents**: Use specialized agents to implement features across frontend, backend, and database
+3. **Test and Validate**: Test API endpoints and frontend UI
+4. **Update Specs**: Modify specifications as requirements evolve
 
 ## Resources
 
