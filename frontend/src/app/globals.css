@@ -279,4 +279,22 @@
   .shadow-strong {
     @apply shadow-xl;
   }
+
+  /* Custom scrollbar styles */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-700/30 rounded-lg;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-cyan-500/50 rounded-lg hover:bg-cyan-400/70 transition-colors;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-corner {
+    @apply bg-transparent;
+  }
 }

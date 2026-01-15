@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks';
 import { useToast } from '@/contexts';
@@ -11,55 +11,65 @@ export default function RegisterPage() {
   const { showToast } = useToast();
   const router = useRouter();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [loading, setLoading] = useState(false);
 
   // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard');
-    }
-  }, [isAuthenticated, router]);
+  if (isAuthenticated) {
+    router.push('/dashboard');
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setLoading(true);
 
     // Validation
-    if (!name || !email || !password || !confirmPassword) {
-      setError('Please fill in all fields');
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+      showToast('Please fill in all fields', 'error');
+      setLoading(false);
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    if (formData.password !== formData.confirmPassword) {
+      showToast('Passwords do not match', 'error');
+      setLoading(false);
       return;
     }
 
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+    if (formData.password.length < 8) {
+      showToast('Password must be at least 8 characters', 'error');
+      setLoading(false);
       return;
     }
-
-    setIsLoading(true);
 
     try {
-      await register({ name, email, password });
-      showToast('Account created successfully!', 'success');
+      await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      showToast('Registration successful! Redirecting to dashboard...', 'success');
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Failed to create account. Please try again.');
+    } catch (error: any) {
+      showToast(error.message || 'Registration failed. Please try again.', 'error');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
       {/* Animated background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -72,25 +82,14 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
             <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-3">Create Account</h1>
           <p className="text-gray-400 text-base">
-            Get started with TaskFlow today
+            Join TaskFlow to get started with task management
           </p>
         </div>
-
-        {/* Error Message Display */}
-        {error && (
-          <div
-            className="mb-6 p-4 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-sm shadow-sm"
-            role="alert"
-            aria-live="polite"
-          >
-            {error}
-          </div>
-        )}
 
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
@@ -108,11 +107,11 @@ export default function RegisterPage() {
               type="text"
               autoComplete="name"
               required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={formData.name}
+              onChange={handleChange}
               className="w-full px-4 py-4 rounded-xl border border-gray-600/50 bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all duration-300 hover:border-cyan-500/50 shadow-sm text-white placeholder-gray-400"
               placeholder="Enter your full name"
-              disabled={isLoading}
+              disabled={loading}
               aria-describedby="name-error"
             />
             {/* Error placeholder - will show validation errors */}
@@ -137,11 +136,11 @@ export default function RegisterPage() {
               type="email"
               autoComplete="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
               className="w-full px-4 py-4 rounded-xl border border-gray-600/50 bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all duration-300 hover:border-cyan-500/50 shadow-sm text-white placeholder-gray-400"
               placeholder="you@example.com"
-              disabled={isLoading}
+              disabled={loading}
               aria-describedby="email-error"
             />
             {/* Error placeholder - will show validation errors */}
@@ -166,18 +165,14 @@ export default function RegisterPage() {
               type="password"
               autoComplete="new-password"
               required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               className="w-full px-4 py-4 rounded-xl border border-gray-600/50 bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all duration-300 hover:border-cyan-500/50 shadow-sm text-white placeholder-gray-400"
               placeholder="Create a strong password"
-              disabled={isLoading}
-              aria-describedby="password-hint password-error"
+              disabled={loading}
+              aria-describedby="password-error"
             />
-            <p
-              id="password-hint"
-              className="mt-1 text-xs text-gray-400"
-            >
+            <p className="text-sm text-gray-400">
               Must be at least 8 characters
             </p>
             {/* Error placeholder - will show validation errors */}
@@ -202,11 +197,11 @@ export default function RegisterPage() {
               type="password"
               autoComplete="new-password"
               required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={formData.confirmPassword}
+              onChange={handleChange}
               className="w-full px-4 py-4 rounded-xl border border-gray-600/50 bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all duration-300 hover:border-cyan-500/50 shadow-sm text-white placeholder-gray-400"
-              placeholder="Confirm your password"
-              disabled={isLoading}
+              placeholder="Re-enter your password"
+              disabled={loading}
               aria-describedby="confirm-password-error"
             />
             {/* Error placeholder - will show validation errors */}
@@ -221,10 +216,10 @@ export default function RegisterPage() {
           <button
             type="submit"
             className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-xl hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:ring-offset-2 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
-            disabled={isLoading}
-            aria-busy={isLoading}
+            disabled={loading}
+            aria-busy={loading}
           >
-            {isLoading ? (
+            {loading ? (
               <div className="flex items-center justify-center gap-2.5">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                 <span>Creating account...</span>
@@ -241,7 +236,6 @@ export default function RegisterPage() {
           <Link
             href="/login"
             className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors hover:underline"
-            tabIndex={isLoading ? -1 : 0}
           >
             Sign in
           </Link>
