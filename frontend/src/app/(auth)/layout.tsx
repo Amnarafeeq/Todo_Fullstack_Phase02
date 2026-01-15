@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 
 // Dynamically import the client-side providers wrapper to avoid SSR issues
-const ClientProvidersWrapper = dynamic(() => import('../ClientProvidersWrapper'), {
+const ClientProviders = dynamic(() => import('../ClientProviders'), {
   ssr: false,
   loading: () => (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col">
@@ -28,7 +28,7 @@ export default function AuthLayout({
   children: ReactNode;
 }) {
   return (
-    <ClientProvidersWrapper>
+    <ClientProviders>
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col">
         {/* Minimal header - Logo only */}
         <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700/50 py-4">
@@ -65,6 +65,6 @@ export default function AuthLayout({
           </div>
         </div>
       </div>
-    </ClientProvidersWrapper>
+    </ClientProviders>
   );
 }

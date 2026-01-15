@@ -3,10 +3,10 @@
 import { ReactNode } from 'react';
 import { Providers } from './providers';
 
-interface ClientProvidersWrapperProps {
+interface ClientProvidersProps {
   children: ReactNode;
 }
 
-export default function ClientProvidersWrapper({ children }: ClientProvidersWrapperProps) {
+export default function ClientProviders({ children }: ClientProvidersProps) {
   return <Providers>{children}</Providers>;
 }

@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 
 // Dynamically import the client-side providers wrapper to avoid SSR issues
-const ClientProvidersWrapper = dynamic(() => import('../ClientProvidersWrapper'), {
+const ClientProviders = dynamic(() => import('../ClientProviders'), {
   ssr: false,
   loading: () => (
     <div className="min-h-screen flex items-center justify-center">
@@ -21,10 +21,10 @@ export default function DashboardLayout({
   children: ReactNode;
 }) {
   return (
-    <ClientProvidersWrapper>
+    <ClientProviders>
       <main className="flex-1">
         {children}
       </main>
-    </ClientProvidersWrapper>
+    </ClientProviders>
   );
 }

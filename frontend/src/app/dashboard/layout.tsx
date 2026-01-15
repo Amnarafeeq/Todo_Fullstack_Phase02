@@ -6,7 +6,7 @@ import { Sidebar } from '@/components/dashboard/Sidebar';
 import dynamic from 'next/dynamic';
 
 // Dynamically import the client-side providers wrapper to avoid SSR issues
-const ClientProvidersWrapper = dynamic(() => import('../ClientProvidersWrapper'), {
+const ClientProviders = dynamic(() => import('../ClientProviders'), {
   ssr: false,
   loading: () => (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex">
@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
 
   return (
-    <ClientProvidersWrapper>
+    <ClientProviders>
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex">
         {/* Animated background */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -105,6 +105,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </main>
         </div>
       </div>
-    </ClientProvidersWrapper>
+    </ClientProviders>
   );
 }
