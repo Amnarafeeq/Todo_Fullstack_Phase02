@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Note: output: 'standalone' causes client-reference-manifest issues with route groups
+  // Vercel handles this automatically in production
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
