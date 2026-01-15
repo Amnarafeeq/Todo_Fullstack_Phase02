@@ -1,8 +1,8 @@
 'use client';
 
+import { ReactNode } from 'react';
 import { AuthProvider, ToastProvider } from '@/contexts';
 import { TasksProvider } from '@/contexts/TasksContext';
-import { ReactNode } from 'react';
 
 interface AppProvidersProps {
   children: ReactNode;

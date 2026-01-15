@@ -282,19 +282,25 @@
 
   /* Custom scrollbar styles */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-gray-700/30 rounded-lg;
+    @apply bg-gray-700 rounded-lg;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-cyan-500/50 rounded-lg hover:bg-cyan-400/70 transition-colors;
+    @apply bg-gray-600 rounded-lg hover:bg-gray-500 transition-colors;
   }
 
   .custom-scrollbar::-webkit-scrollbar-corner {
     @apply bg-transparent;
+  }
+
+  /* Firefox support */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #4B5563 transparent;
   }
 }

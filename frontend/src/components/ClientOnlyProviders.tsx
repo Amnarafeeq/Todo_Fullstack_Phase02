@@ -1,7 +1,6 @@
 'use client';
 
-import { AuthProvider, ToastProvider } from '@/contexts';
-import { TasksProvider } from '@/contexts/TasksContext';
+import { AuthProvider, ToastProvider, TasksProvider } from '@/contexts';
 import { ReactNode } from 'react';
 import { useIsClient } from '@/hooks';
 

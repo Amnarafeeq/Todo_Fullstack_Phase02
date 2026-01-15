@@ -12,8 +12,6 @@ import {
 import { TaskList, TaskForm } from '@/components';
 import { Task, TaskFilters as ITaskFilters, defaultTaskFilters } from '@/types';
 
-import { AuthProvider, ToastProvider } from '@/contexts';
-import { TasksProvider } from '@/contexts/TasksContext';
 
 function DashboardPageContent() {
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -70,13 +68,25 @@ function DashboardPageContent() {
     return Array.from(cats);
   }, [tasks]);
 
-  const stats = useMemo(() => ({
-    total: allTasks.length,
-    pending: allTasks.filter(t => t.status === 'pending').length,
-    completed: allTasks.filter(t => t.status === 'completed').length,
-    high: allTasks.filter(t => t.priority === 'high').length,
-    overdue: allTasks.filter(t => t.status === 'pending').length, // Simplified - in real app would check due dates
-  }), [allTasks]);
+  const stats = useMemo(() => {
+    const total = allTasks.length || 1; // Avoid division by zero
+    const completed = allTasks.filter(t => t.status === "completed").length;
+    const pending = allTasks.filter(t => t.status === "pending").length;
+
+    const high = allTasks.filter(t => t.priority === "high").length;
+    const medium = allTasks.filter(t => t.priority === "medium").length;
+    const low = allTasks.filter(t => t.priority === "low").length;
+
+    return {
+      total,
+      pending,
+      completed,
+      high,
+      medium,
+      low,
+      overdue: pending, // Simplified - in real app would check due dates
+    };
+  }, [allTasks]);
 
   // Handlers
   const handleEditTask = (task: Task) => {
@@ -312,7 +322,7 @@ function DashboardPageContent() {
                   View all →
                 </button>
               </div>
-              <div className="space-y-3 max-h-80 overflow-y-auto">
+              <div className="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
                 {allTasks
                   .slice()
                   .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -363,7 +373,7 @@ function DashboardPageContent() {
                   <div className="w-full bg-gray-700 rounded-full h-3 shadow-inner">
                     <div
                       className="bg-gradient-to-r from-red-500 to-red-600 h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
-                      style={{ width: `${tasks.length > 0 ? Math.min((stats.high / tasks.length) * 100, 100) : 0}%` }}
+                      style={{ width: `${Math.min((stats.high / stats.total) * 100, 100)}%` }}
                     ></div>
                   </div>
                 </div>
@@ -371,12 +381,12 @@ function DashboardPageContent() {
                 <div>
                   <div className="flex justify-between mb-2">
                     <span className="text-sm font-medium text-gray-300">Medium Priority</span>
-                    <span className="text-sm font-medium text-gray-300">{tasks.filter(t => t.priority === 'medium').length}</span>
+                    <span className="text-sm font-medium text-gray-300">{stats.medium}</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-3 shadow-inner">
                     <div
                       className="bg-gradient-to-r from-yellow-500 to-yellow-600 h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
-                      style={{ width: `${tasks.length > 0 ? Math.min((tasks.filter(t => t.priority === 'medium').length / tasks.length) * 100, 100) : 0}%` }}
+                      style={{ width: `${Math.min((stats.medium / stats.total) * 100, 100)}%` }}
                     ></div>
                   </div>
                 </div>
@@ -384,12 +394,12 @@ function DashboardPageContent() {
                 <div>
                   <div className="flex justify-between mb-2">
                     <span className="text-sm font-medium text-gray-300">Low Priority</span>
-                    <span className="text-sm font-medium text-gray-300">{tasks.filter(t => t.priority === 'low').length}</span>
+                    <span className="text-sm font-medium text-gray-300">{stats.low}</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-3 shadow-inner">
                     <div
                       className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
-                      style={{ width: `${tasks.length > 0 ? Math.min((tasks.filter(t => t.priority === 'low').length / tasks.length) * 100, 100) : 0}%` }}
+                      style={{ width: `${Math.min((stats.low / stats.total) * 100, 100)}%` }}
                     ></div>
                   </div>
                 </div>
@@ -404,7 +414,7 @@ function DashboardPageContent() {
                   <div className="w-full bg-gray-700 rounded-full h-3 shadow-inner">
                     <div
                       className="bg-gradient-to-r from-cyan-500 to-blue-500 h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
-                      style={{ width: `${stats.total > 0 ? Math.min((stats.completed / stats.total) * 100, 100) : 0}%` }}
+                      style={{ width: `${Math.min((stats.completed / stats.total) * 100, 100)}%` }}
                     ></div>
                   </div>
                 </div>
@@ -447,13 +457,5 @@ function DashboardPageContent() {
 }
 
 export default function DashboardPage() {
-  return (
-    <AuthProvider>
-      <ToastProvider>
-        <TasksProvider>
-          <DashboardPageContent />
-        </TasksProvider>
-      </ToastProvider>
-    </AuthProvider>
-  );
+  return <DashboardPageContent />;
 }
