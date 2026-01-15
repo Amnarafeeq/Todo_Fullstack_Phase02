@@ -21,14 +21,16 @@ export default function LandingPage() {
     }
   }, [mounted, loading, isAuthenticated, router]);
 
-  // If loading or authenticated (and mounted), show a minimal loader or nothing to prevent content flicker
-  // The middleware handle server-side redirect, so this is the fallback
-  if (!mounted || (loading && !isAuthenticated) || isAuthenticated) {
+  // Show the landing page content only when not authenticated and loaded
+  // During loading or when authenticated, show a loading state
+  if (!mounted || loading || isAuthenticated) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-lg">Loading Dashboard...</p>
+          <p className="text-white text-lg">
+            {isAuthenticated ? 'Redirecting to dashboard...' : 'Loading...'}
+          </p>
         </div>
       </div>
     );
