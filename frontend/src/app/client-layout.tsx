@@ -3,11 +3,11 @@
 import { ReactNode } from 'react';
 import { AuthProvider, ToastProvider, TasksProvider } from '@/contexts';
 
-interface ProvidersProps {
+interface ClientLayoutProps {
   children: ReactNode;
 }
 
-export function Providers({ children }: ProvidersProps) {
+export function ClientLayout({ children }: ClientLayoutProps) {
   return (
     <AuthProvider>
       <ToastProvider>

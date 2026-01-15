@@ -1,9 +1,6 @@
-'use client';
-
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ReactNode } from 'react';
-import AppProviders from '@/components/AppProviders';
 
 // Configure Inter font
 const inter = Inter({
@@ -12,12 +9,19 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+// Metadata for SEO
+export const metadata: Metadata = {
+  title: 'TaskFlow - Organize Your Life',
+  description: 'A modern, elegant task management application to help you stay organized and productive.',
+  keywords: ['todo', 'tasks', 'productivity', 'organization'],
+};
+
 // Root Layout Component
-// Wraps the entire application with providers and global layout
+// Minimal layout for server components like the home page
 export default function RootLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" className={inter.variable}>
@@ -26,11 +30,9 @@ export default function RootLayout({
         bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100
         min-h-screen flex flex-col
       `}>
-        <AppProviders>
-          <main className="flex-1">
-            {children}
-          </main>
-        </AppProviders>
+        <main className="flex-1">
+          {children}
+        </main>
       </body>
     </html>
   );

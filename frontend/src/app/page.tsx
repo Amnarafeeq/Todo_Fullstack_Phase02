@@ -1,41 +1,7 @@
-'use client';
+import { Suspense } from 'react';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks';
-import Link from 'next/link';
-
-export default function LandingPage() {
-  const { isAuthenticated, loading } = useAuth();
-  const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Redirect authenticated users to dashboard
-  useEffect(() => {
-    if (mounted && !loading && isAuthenticated) {
-      router.push('/dashboard');
-    }
-  }, [mounted, loading, isAuthenticated, router]);
-
-  // Show the landing page content only when not authenticated and loaded
-  // During loading or when authenticated, show a loading state
-  if (!mounted || loading || isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-lg">
-            {isAuthenticated ? 'Redirecting to dashboard...' : 'Loading...'}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
+// Server component for the static landing page content
+function LandingPageContent() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Animated background elements */}
@@ -58,15 +24,15 @@ export default function LandingPage() {
               <span className="text-xl font-bold text-white">Task<span className="text-cyan-400">Flow</span></span>
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/login" className="text-gray-200 hover:text-cyan-400 font-medium transition-colors duration-300">
+              <a href="/login" className="text-gray-200 hover:text-cyan-400 font-medium transition-colors duration-300">
                 Sign In
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/register"
                 className="px-6 py-2.5 bg-gradient-to-r from-cyan-400 to-blue-500 text-gray-900 font-bold rounded-lg hover:from-cyan-300 hover:to-blue-400 transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:shadow-cyan-500/30"
               >
                 Get Started
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -88,18 +54,18 @@ export default function LandingPage() {
               The ultimate productivity platform designed to streamline your tasks, boost efficiency, and achieve more with less effort.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link
+              <a
                 href="/register"
                 className="px-8 py-4 bg-gradient-to-r from-cyan-400 to-blue-500 text-gray-900 font-bold rounded-xl hover:from-cyan-300 hover:to-blue-400 transition-all duration-300 shadow-2xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transform hover:-translate-y-1 text-lg"
               >
                 Start Free Trial
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/dashboard"
                 className="px-8 py-4 bg-gray-800/50 backdrop-blur-sm text-white font-bold rounded-xl border-2 border-gray-600/50 hover:border-cyan-400/50 hover:bg-cyan-400/10 transition-all duration-300 hover:-translate-y-1 text-lg shadow-lg hover:shadow-xl"
               >
                 Live Demo
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -360,22 +326,29 @@ export default function LandingPage() {
             Join thousands of professionals who have revolutionized their productivity with our platform.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
+            <a
               href="/register"
               className="px-8 py-4 bg-gradient-to-r from-cyan-400 to-blue-500 text-gray-900 font-bold rounded-xl hover:from-cyan-300 hover:to-blue-400 transition-all duration-300 shadow-2xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transform hover:-translate-y-1 text-lg"
             >
               Start Your Free Trial
-            </Link>
-            <Link
+            </a>
+            <a
               href="/login"
               className="px-8 py-4 bg-gray-800/50 backdrop-blur-sm text-white font-bold rounded-xl border-2 border-gray-600/50 hover:border-cyan-400/50 hover:bg-cyan-400/10 transition-all duration-300 hover:-translate-y-1 text-lg shadow-lg hover:shadow-xl"
             >
               Sign In
-            </Link>
+            </a>
           </div>
         </div>
       </section>
 
     </main>
+  );
+}
+
+// The actual page component that will handle client-side authentication check
+export default function LandingPage() {
+  return (
+    <LandingPageContent />
   );
 }
